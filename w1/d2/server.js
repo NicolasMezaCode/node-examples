@@ -9,7 +9,7 @@ const fs = require("fs");
 const server = http.createServer((request, response) => {
   console.log("url", request.url);
   if (request.url === "readFile") {
-    fs.readFile("index.html", "utf8", (error, data) => {
+    fs.readFile("main.html", "utf8", (error, data) => {
       if (error) {
         console.log("error on read file", error);
       } else {

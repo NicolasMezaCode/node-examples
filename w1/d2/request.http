@@ -1,2 +1,7 @@
-# GET http://localhost:3000/users
-# Content-Type: application/json
+DELETE   http://localhost:3000/users
+content-type: application/json
+
+    {
+        "name":"Mateo",
+        "country":"Canada"
+    }
