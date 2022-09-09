@@ -1,74 +1,78 @@
-const http=require("http");
-const fs=require("fs");
+const http = require("http");
+const fs = require("fs");
 
-const server=http.createServer(async(request,response)=>{
-    console.log("url",request.url)
-    if (request.url==="/users"){
-        if(request.method==="GET"){
-            fs.readFile("users.json","utf8",(error,data)=>{
-                if(error){
-                    console.log("error on reading file")
-                } else{
-                    console.log("content file",data)
-                    response.writeHead(200,{"content-type":"application/json"})
-                    response.write(JSON.stringify(data));
-                    response.end();
-                }
-            })
+const server = http.createServer((request, response) => {
+  console.log("request received");
+  fs.readFile("users.json", "utf-8", (err, data) => {
+    if (err) throw err;
+    if (request.method === "GET") {
+      response.setHeader("content-type", "application/json");
+      response.write(data);
+      response.end();
+    } else {
+      let body = "";
+      request.on("data", (chunk) => {
+        body += chunk;
+      });
+      request.on("end", () => {
+        console.log(JSON.parse(body));
+        const jsonBody = JSON.parse(body);
+        const jsonData = JSON.parse(data);
+        if (request.method === "POST") {
+          const newUser = { id: jsonData.users.length + 1, ...jsonBody };
+          const updatedUsers = [...jsonData.users, newUser];
+          fs.writeFile(
+            "users.json",
+            JSON.stringify({ users: updatedUsers }),
+            (err) => {
+              response.setHeader("content-type", "application/json");
+              response.write(JSON.stringify(newUser));
+              response.end();
+            }
+          );
         }
-        if(request.method==="POST"){
-            const buffers=[];
-            for await(const chunk of request){
-                buffers.push(chunk)
-            };
-            const data =Buffer.concat(buffers).toString();
-            const newUser=JSON.parse(data);
-            response.end();
-            fs.readFile("users.json","utf8",(error,data)=>{
-                if(error){console.log(error)}
-                else{
-                    const objData=JSON.parse(data);
-                    objData.users.push(newUser);
-                    fs.writeFile("users.json",JSON.stringify(objData),(error)=>{
-                        if(error){
-                            console.log(error)
-                        }else{
-                            response.writeHead(201,{"content-type":"application/json"});
-                            response.write(JSON.stringify(objData));
-                            response.end();
-                        }
-                    })
-                }
-            })
+        if (request.method === "PUT") {
+          let updatedUser = {};
+          const updatedUsers = jsonData.users.map((user) => {
+            if (user.id === jsonBody.id) {
+              updatedUser = {
+                ...user,
+                name: jsonBody.name,
+                country: jsonBody.country,
+              };
+              return updatedUser;
+            }
+            return user;
+          });
+          fs.writeFile(
+            "users.json",
+            JSON.stringify({ users: updatedUsers }),
+            (err) => {
+              if (err) throw err;
+              response.setHeader("content-type", "application/json");
+              response.write(JSON.stringify(updatedUser));
+              response.end();
+            }
+          );
         }
-        if(request.method==="DELETE"){
-            const buffers=[];
-            for await(const chunk of request){
-                buffers.push(chunk)
-            };
-            const data =Buffer.concat(buffers).toString();
-            const newUser=JSON.parse(data);
-            response.end();
-            fs.readFile("users.json","utf8",(error,data)=>{
-                if(error){console.log(error)}
-                else{
-                    const objData=JSON.parse(data);
-                    const updatedObj=objData.filter((object)=>{
-                        return object != newUser
-                    })
-                    fs.writeFile("users.json",JSON.stringify(updatedObj),(error)=>{
-                        if(error){console.log(error)}
-                        else{
-                            response.writeHead(201,{"content-type":"application/json"});
-                            response.write(JSON.stringify(updatedObj));
-                            response.end();
-                        }
-                    })
-                }
-
-            })
+        if (request.method === "DELETE") {
+          const updatedUsers = jsonData.users.filter(
+            (user) => user.id !== jsonBody.id
+          );
+          fs.writeFile(
+            "users.json",
+            JSON.stringify({ users: updatedUsers }),
+            (err) => {
+              if (err) throw err;
+              response.setHeader("content-type", "application/json");
+              response.write(JSON.stringify({ message: "User deleted" }));
+              response.end();
+            }
+          );
         }
+      });
     }
-})
+  });
+});
 
-server.listen(3000, () => console.log("server runnning on 3000"));
+server.listen(3001, () => console.log("server running on port 3001"));
