@@ -18,6 +18,5 @@ app.use(
   })
 );
 app.set("view engine", "ejs");
-const users = ;
 
 app.listen(8080, () => console.log("server running 8080"));
