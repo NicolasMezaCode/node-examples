@@ -24,7 +24,7 @@ const showLoginForm = (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const receivedUsername = req.body.username;
+  const receivedUsername = req.body.email;
   const receivedPassword = req.body.password;
   const user = users[receivedUsername];
 
@@ -37,7 +37,7 @@ const loginUser = async (req, res) => {
   if (isMatch) {
     // res.cookie("username", user.username);
     req.session.username = user.username;
-    return res.redirect("/profile");
+    return res.redirect("/myurls");
   }
   res.send("invalid password");
 };
