@@ -7,6 +7,7 @@ const showRegisterForm = (req, res) => {
 };
 
 const registerUser = async (req, res) => {
+  console.log("body", req.body);
   const receivedUsername = req.body.username;
   const hashedPassword = hashPassword(req.body.password);
   users[receivedUsername] = {
@@ -36,7 +37,7 @@ const loginUser = async (req, res) => {
   if (!user || !isMatch) return res.send("invalid username or password");
   if (isMatch) {
     // res.cookie("username", user.username);
-    req.session.username = user.username;
+    req.user.username = user.username;
     return res.redirect("/profile");
   }
   res.send("invalid password");
