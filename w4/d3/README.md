@@ -247,7 +247,7 @@ It is where we will store our data, create tables, entities, and relationships b
 
 # Exercise - Week Assignment
 
-[Assignment Link](https://classroom.github.com/a/qJe-Bois)
+[Assignment Link](https://classroom.github.com/a/e1S49mlk)
 
 ## Activities
 
