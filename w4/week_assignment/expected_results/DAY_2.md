@@ -266,7 +266,7 @@
 (4 rows)
 ```
 
-## 01_get_total_assistance_per_instructor.sql
+## 01_get_total_assistance_requests_instructor.sql
 
 ```text
  total_assistances | instructor_name
@@ -300,6 +300,15 @@
  Roberto Towne      | Maximillia Willms        | Debitis harum provident  | 00:03:15
  Jadyn Bosco        | Lizzie Wunsch            | Optio aspernatur nobis   | 00:03:15
 (26299 rows)
+```
+
+## 04_get_avg_assistance_request_duration.sql
+
+```text
+ avg_assistance_request_duration
+---------------------------------
+ 00:14:21.556903
+(1 row)
 ```
 
 ## 04_get_avg_duration_assistance_per_class.sql
