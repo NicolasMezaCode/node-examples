@@ -4,4 +4,4 @@ migrations
 queries*
 tests
 testHelper.js
-package*
+.env
