@@ -1,3 +1,34 @@
+/*
+client send some message or data -> socket.emit()
+server receives the message -> socket.on()
+server send message back to sender (1 client) -> socket.emit()
+server send message to all connected clients -> io.emit()
+server send message to all connected clients except for sender -> socket.broadcast.emit()
+client receives message from server -> socket.on()
+if server wants to filter by room -> io.to(room).emit || socket.to(room).emit || socket.to(room).broadcast
+send -> emit("event name", data)
+receive -> on("event name" (data) => {})
+*/
+
+const socket = io();
+let flag = 1;
+const b1 = document.getElementById("b1");
+const boxes = document.querySelectorAll(".box");
+boxes.forEach((box) => {
+  box.addEventListener("click", (e) => {
+    const value = flag === 1 ? "X" : "0";
+    socket.emit("click", { position: e.target.id, value });
+  });
+});
+
+socket.on("new_move", (click) => {
+  console.log("new_move", click);
+  document.getElementById(click.position).value = click.value;
+  document.getElementById(click.position).disabled = true;
+  flag = flag === 1 ? 0 : 1;
+  myfunc();
+});
+
 // Function called whenever user tab on any box
 function myfunc() {
   // Setting DOM to all boxes or input field
@@ -271,7 +302,7 @@ function myfunc_2() {
 
 // Here onwards, functions check turn of the player
 // and put accordingly value X or 0
-flag = 1;
+
 function myfunc_3() {
   if (flag == 1) {
     document.getElementById("b1").value = "X";
